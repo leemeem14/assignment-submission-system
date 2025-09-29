@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::div}, '제출물 상세')}">
+<div>
+    <h2>제출물 상세</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 th:text="'학생: ' + ${submission.student.name}"></h5>
+            <small class="text-muted" 
+                   th:text="'제출일: ' + ${#temporals.format(submission.submittedAt, 'yyyy-MM-dd HH:mm')}"></small>
+        </div>
+        <div class="card-body">
+            <h6>제출 내용:</h6>
+            <p th:text="${submission.content}"></p>
+
+            <div th:if="${submission.fileName}">
+                <h6>첨부 파일:</h6>
+                <a th:href="@{/uploads/{file}(file=${submission.filePath})}" 
+                   th:text="${submission.fileName}"
+                   class="btn btn-outline-primary btn-sm" 
+                   download></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 채점 섹션 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>채점</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" th:action="@{/professor/submissions/{id}/grade(id=${submission.id})}" 
+                  th:object="${grade}">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="score" class="form-label">점수</label>
+                        <input type="number" class="form-control" 
+                               th:field="*{score}" min="0" max="100">
+                    </div>
+                    <div class="col-md-9">
+                        <label for="feedback" class="form-label">피드백</label>
+                        <textarea class="form-control" rows="3" th:field="*{feedback}"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-2">채점 저장</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 댓글 섹션 -->
+    <div class="card">
+        <div class="card-header">
+            <h5>댓글</h5>
+        </div>
+        <div class="card-body">
+            <!-- 댓글 목록 -->
+            <div th:if="${!comments.empty}">
+                <div th:each="comment : ${comments}" class="mb-3 p-2 border-start border-primary">
+                    <strong th:text="${comment.author.name}"></strong>
+                    <small class="text-muted" 
+                           th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+                    <p th:text="${comment.content}" class="mb-0"></p>
+                </div>
+            </div>
+
+            <!-- 새 댓글 작성 -->
+            <form method="post" th:action="@{/professor/submissions/{id}/comments(id=${submission.id})}" 
+                  th:object="${newComment}">
+                <div class="mb-3">
+                    <textarea class="form-control" rows="2" 
+                              th:field="*{content}" 
+                              placeholder="댓글을 입력하세요..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">댓글 작성</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="/professor/dashboard" class="btn btn-secondary">대시보드로</a>
+    </div>
+</div>
+</html>

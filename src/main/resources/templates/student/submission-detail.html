@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::div}, '내 제출물')}">
+<div>
+    <h2>내 제출물</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 th:text="'과제: ' + ${submission.assignment.title}"></h5>
+            <small class="text-muted" 
+                   th:text="'제출일: ' + ${#temporals.format(submission.submittedAt, 'yyyy-MM-dd HH:mm')}"></small>
+        </div>
+        <div class="card-body">
+            <h6>제출 내용:</h6>
+            <p th:text="${submission.content}"></p>
+
+            <div th:if="${submission.fileName}">
+                <h6>첨부 파일:</h6>
+                <a th:href="@{/uploads/{file}(file=${submission.filePath})}" 
+                   th:text="${submission.fileName}"
+                   class="btn btn-outline-primary btn-sm" 
+                   download></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 채점 결과 -->
+    <div th:if="${submission.grade}" class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5>채점 결과</h5>
+        </div>
+        <div class="card-body">
+            <h4>점수: <span th:text="${submission.grade.score}"></span>점</h4>
+            <div th:if="${submission.grade.feedback}">
+                <h6>피드백:</h6>
+                <p th:text="${submission.grade.feedback}"></p>
+            </div>
+            <small class="text-muted" 
+                   th:text="'채점일: ' + ${#temporals.format(submission.grade.gradedAt, 'yyyy-MM-dd HH:mm')}"></small>
+        </div>
+    </div>
+
+    <div th:if="${!submission.grade}" class="alert alert-info">
+        아직 채점되지 않았습니다. 조금 더 기다려주세요.
+    </div>
+
+    <!-- 댓글 섹션 -->
+    <div class="card">
+        <div class="card-header">
+            <h5>질문 및 답변</h5>
+        </div>
+        <div class="card-body">
+            <!-- 댓글 목록 -->
+            <div th:if="${!comments.empty}">
+                <div th:each="comment : ${comments}" class="mb-3 p-2 border-start border-primary">
+                    <strong th:text="${comment.author.name}"></strong>
+                    <span th:if="${comment.author.role.name() == 'PROFESSOR'}" class="badge bg-primary">교수</span>
+                    <span th:if="${comment.author.role.name() == 'STUDENT'}" class="badge bg-info">학생</span>
+                    <small class="text-muted ms-2" 
+                           th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+                    <p th:text="${comment.content}" class="mb-0 mt-1"></p>
+                </div>
+            </div>
+
+            <div th:if="${comments.empty}" class="text-muted mb-3">
+                아직 질문이나 답변이 없습니다.
+            </div>
+
+            <!-- 새 질문 작성 -->
+            <form method="post" th:action="@{/student/submissions/{id}/comments(id=${submission.id})}" 
+                  th:object="${newComment}">
+                <div class="mb-3">
+                    <textarea class="form-control" rows="2" 
+                              th:field="*{content}" 
+                              placeholder="질문이 있으시면 여기에 작성해주세요..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">질문하기</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="/student/dashboard" class="btn btn-secondary">대시보드로</a>
+    </div>
+</div>
+</html>

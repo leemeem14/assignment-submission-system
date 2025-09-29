@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::div}, '제출물 목록')}">
+<div>
+    <h2 th:text="'과제: ' + ${assignment.title}"></h2>
+    <p th:text="'마감일: ' + ${#temporals.format(assignment.dueDate, 'yyyy-MM-dd HH:mm')}"></p>
+
+    <div th:if="${submissions.empty}" class="alert alert-info">
+        아직 제출물이 없습니다.
+    </div>
+
+    <div th:if="${!submissions.empty}" class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>학생 이름</th>
+                    <th>제출일</th>
+                    <th>점수</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="submission : ${submissions}">
+                    <td th:text="${submission.student.name}"></td>
+                    <td th:text="${#temporals.format(submission.submittedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <span th:if="${submission.grade}" 
+                              th:text="${submission.grade.score} + '점'" 
+                              class="badge bg-success"></span>
+                        <span th:if="${!submission.grade}" 
+                              class="badge bg-secondary">미채점</span>
+                    </td>
+                    <td>
+                        <span th:if="${submission.grade}" class="badge bg-primary">채점완료</span>
+                        <span th:if="${!submission.grade}" class="badge bg-warning">채점대기</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/professor/submissions/{id}(id=${submission.id})}" 
+                           class="btn btn-sm btn-primary">상세보기</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="/professor/dashboard" class="btn btn-secondary">뒤로가기</a>
+</div>
+</html>

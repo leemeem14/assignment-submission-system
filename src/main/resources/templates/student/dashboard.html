@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::div}, '학생 대시보드')}">
+<div>
+    <h2>학생 대시보드</h2>
+
+    <div class="row">
+        <!-- 과제 목록 -->
+        <div class="col-md-8">
+            <h4>과제 목록</h4>
+            <div th:if="${assignments.empty}" class="alert alert-info">
+                등록된 과제가 없습니다.
+            </div>
+
+            <div th:if="${!assignments.empty}" class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>과제명</th>
+                            <th>교수님</th>
+                            <th>마감일</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="assignment : ${assignments}">
+                            <td th:text="${assignment.title}"></td>
+                            <td th:text="${assignment.professor.name}"></td>
+                            <td th:text="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td>
+                                <!-- 제출 상태 확인 로직 필요 -->
+                                <span class="badge bg-warning">미제출</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/student/assignments/{id}(id=${assignment.id})}" 
+                                   class="btn btn-sm btn-primary">상세보기</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 내 제출 현황 -->
+        <div class="col-md-4">
+            <h4>내 제출 현황</h4>
+            <div th:if="${submissions.empty}" class="alert alert-info">
+                제출한 과제가 없습니다.
+            </div>
+
+            <div th:if="${!submissions.empty}">
+                <div th:each="submission : ${submissions}" class="card mb-2">
+                    <div class="card-body p-2">
+                        <h6 class="card-title" th:text="${submission.assignment.title}"></h6>
+                        <p class="card-text small">
+                            제출일: <span th:text="${#temporals.format(submission.submittedAt, 'MM-dd HH:mm')}"></span>
+                        </p>
+                        <div th:if="${submission.grade}">
+                            <span class="badge bg-success" 
+                                  th:text="'점수: ' + ${submission.grade.score} + '점'"></span>
+                        </div>
+                        <div th:if="${!submission.grade}">
+                            <span class="badge bg-secondary">채점 대기</span>
+                        </div>
+                        <a th:href="@{/student/submissions/{id}(id=${submission.id})}" 
+                           class="btn btn-sm btn-outline-primary mt-1">상세보기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

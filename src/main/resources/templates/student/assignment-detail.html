@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::div}, '과제 상세')}">
+<div>
+    <h2 th:text="${assignment.title}"></h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>과제 정보</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>교수님:</strong> <span th:text="${assignment.professor.name}"></span></p>
+            <p><strong>생성일:</strong> <span th:text="${#temporals.format(assignment.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+            <p><strong>마감일:</strong> <span th:text="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+
+            <div th:if="${assignment.description}">
+                <strong>설명:</strong>
+                <p th:text="${assignment.description}"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 과제 제출 폼 -->
+    <div class="card">
+        <div class="card-header">
+            <h5>과제 제출</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" 
+                  th:action="@{/student/assignments/{id}/submit(id=${assignment.id})}" 
+                  th:object="${submission}"
+                  enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">제출 내용</label>
+                    <textarea class="form-control" rows="5" 
+                              th:field="*{content}" 
+                              placeholder="과제 내용을 입력하세요..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">파일 첨부</label>
+                    <input type="file" class="form-control" 
+                           th:field="*{file}" 
+                           accept=".pdf,.doc,.docx,.txt,.zip,.rar">
+                    <div class="form-text">
+                        허용 파일 형식: PDF, DOC, DOCX, TXT, ZIP, RAR (최대 10MB)
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">제출하기</button>
+                <a href="/student/dashboard" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </div>
+</div>
+</html>

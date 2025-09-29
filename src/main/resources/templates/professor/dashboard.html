@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::div}, '교수 대시보드')}">
+<div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>교수 대시보드</h2>
+        <a href="/professor/assignments/new" class="btn btn-primary">새 과제 만들기</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h4>내 과제 목록</h4>
+            <div th:if="${assignments.empty}" class="alert alert-info">
+                등록된 과제가 없습니다. 새 과제를 만들어보세요.
+            </div>
+
+            <div th:if="${!assignments.empty}" class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>제목</th>
+                            <th>생성일</th>
+                            <th>마감일</th>
+                            <th>제출 현황</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="assignment : ${assignments}">
+                            <td th:text="${assignment.title}"></td>
+                            <td th:text="${#temporals.format(assignment.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td th:text="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td>
+                                <a th:href="@{/professor/assignments/{id}/submissions(id=${assignment.id})}" 
+                                   class="btn btn-sm btn-info">
+                                    제출물 확인 (<span th:text="${assignment.submissions.size()}"></span>)
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/professor/assignments/{id}/edit(id=${assignment.id})}" 
+                                   class="btn btn-sm btn-warning">수정</a>
+                                <form method="post" 
+                                      th:action="@{/professor/assignments/{id}/delete(id=${assignment.id})}" 
+                                      style="display: inline;" 
+                                      onsubmit="return confirm('정말 삭제하시겠습니까?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

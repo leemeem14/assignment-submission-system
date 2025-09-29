@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::div}, 'Home')}">
+<div>
+    <div class="jumbotron bg-light p-5 rounded-lg mb-4">
+        <h1 class="display-4">과제 제출 시스템</h1>
+        <p class="lead">교수와 학생을 위한 온라인 과제 제출 및 관리 시스템입니다.</p>
+        <hr class="my-4">
+        <div sec:authorize="!isAuthenticated()">
+            <p>시작하려면 로그인하거나 계정을 만드세요.</p>
+            <a class="btn btn-primary btn-lg me-2" href="/login" role="button">로그인</a>
+            <a class="btn btn-success btn-lg" href="/register" role="button">회원가입</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <p>대시보드에서 과제를 확인하세요.</p>
+            <a class="btn btn-primary btn-lg" href="/dashboard" role="button">대시보드</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h3>교수님을 위한</h3>
+            <ul>
+                <li>과제 생성 및 관리</li>
+                <li>학생 제출물 확인</li>
+                <li>채점 및 피드백</li>
+                <li>댓글을 통한 소통</li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h3>학생을 위한</h3>
+            <ul>
+                <li>과제 목록 확인</li>
+                <li>파일 업로드</li>
+                <li>제출 현황 확인</li>
+                <li>점수 및 피드백 확인</li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h3>주요 기능</h3>
+            <ul>
+                <li>안전한 로그인 시스템</li>
+                <li>파일 업로드/다운로드</li>
+                <li>실시간 댓글 시스템</li>
+                <li>체계적인 성적 관리</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</html>

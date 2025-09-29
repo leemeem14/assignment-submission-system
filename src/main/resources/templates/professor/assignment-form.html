@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::div}, ${assignment.id} ? '과제 수정' : '과제 생성')}">
+<div>
+    <h2 th:text="${assignment.id} ? '과제 수정' : '과제 생성'"></h2>
+
+    <form method="post" 
+          th:action="${assignment.id} ? @{/professor/assignments/{id}(id=${assignment.id})} : @{/professor/assignments}" 
+          th:object="${assignment}">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">과제 제목</label>
+            <input type="text" class="form-control" 
+                   th:field="*{title}"
+                   th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''">
+            <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
+                <span th:errors="*{title}"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">과제 설명</label>
+            <textarea class="form-control" rows="5" th:field="*{description}"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="dueDate" class="form-label">마감일</label>
+            <input type="datetime-local" class="form-control" 
+                   th:field="*{dueDate}"
+                   th:classappend="${#fields.hasErrors('dueDate')} ? 'is-invalid' : ''">
+            <div th:if="${#fields.hasErrors('dueDate')}" class="invalid-feedback">
+                <span th:errors="*{dueDate}"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">저장</button>
+        <a href="/professor/dashboard" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+</html>
